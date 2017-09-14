@@ -5,6 +5,8 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLConnection;
 import javax.swing.border.Border;
@@ -60,6 +62,7 @@ public class DividendCalculator {
         } catch (NumberFormatException e) {
             System.out.println("Error: " + e);
         }
+        System.out.println(monthlyTotalDiv);
         return monthlyTotalDiv;
     }
     
@@ -129,7 +132,10 @@ public class DividendCalculator {
       jpanMain.add(new JPanel());
       JButton jbuttonCalculateTotal = new JButton("Calculate");
       jbuttonCalculateTotal.addActionListener((ae) -> { // Calculate total monthly dividend using overloaded method
-        jlabMonthlyDiv.setText("Monthly Div / Total: " + calculateTotalMonthlyDiv(jtfShareArray)); 
+        double totalMonthly = calculateTotalMonthlyDiv(jtfShareArray);
+        BigDecimal bd = new BigDecimal(totalMonthly).setScale(2, RoundingMode.HALF_EVEN);
+        totalMonthly = bd.doubleValue();
+        jlabMonthlyDiv.setText("Monthly Div / Total: " + totalMonthly); 
       });
       jpanMain.add(jbuttonCalculateTotal);
       jpanMain.add(new JPanel());
