@@ -49,18 +49,27 @@ public class DividendCalculator {
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new GridLayout(4, 5, 10, 10));
       
+      // Initialize and center 'column' labels
       JLabel jlabSymbols = new JLabel("Symbols");
+      jlabSymbols.setHorizontalAlignment(SwingConstants.CENTER);
       JLabel jlabPrice = new JLabel("Price");
+      jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
       JLabel jlabMonthlyDiv = new JLabel("Monthly Div / Total: " + monthlyTotalDiv);
+      jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
       
       // Create columns of JLabels
       JLabel[] jlabSymbolArray = new JLabel[3];
       JLabel[] jlabPriceArray = new JLabel[3];
       JLabel[] jlabMonthlyDivArray = new JLabel[3];
+      
+      // Initialize arrays and center text in labels
       for(int i = 0; i < 3; i++) {
           jlabSymbolArray[i] = new JLabel(symbolArray[i]);
+          jlabSymbolArray[i].setHorizontalAlignment(SwingConstants.CENTER);
           jlabPriceArray[i] = new JLabel(priceArray[i]);
+          jlabPriceArray[i].setHorizontalAlignment(SwingConstants.CENTER);
           jlabMonthlyDivArray[i] = new JLabel(monthlyDivArray[i]);
+          jlabMonthlyDivArray[i].setHorizontalAlignment(SwingConstants.CENTER);
       }
       
       frame.add(jlabSymbols);
@@ -108,7 +117,7 @@ class GoogleStockReader {
         InputStreamReader inStream = new InputStreamReader(urlConn.getInputStream());
         BufferedReader buff = new BufferedReader(inStream);
         
-        String price = "not found";
+        String price = "Not found";
         String lineFind = (":[\"" + sym + "\",\"");
         System.out.println(lineFind); // Delete
         String line = buff.readLine();
@@ -147,7 +156,7 @@ class NasdaqDivReader {
         InputStreamReader inStream = new InputStreamReader(urlConn.getInputStream());
         BufferedReader buff = new BufferedReader(inStream);
         
-        String div = "not found";
+        String div = "Not found";
         String lineFind = ("<span id=\"quotes_content_left_dividendhistoryGrid_CashAmount_0\">");
         String line = buff.readLine();
         while(line != null) {
@@ -176,7 +185,7 @@ class URLObject {
         urlArray = new String[arraySize];
         urlArray[0] = "https://www.google.com/finance?q=CEFL&ei=Paa5WZnNN8XXjAHrsZ_IDg";
         urlArray[1] = "https://www.google.com/finance?q=ORC&ei=u565WZGyM8GqjAGcoaBg";
-        urlArray[2] = "https://www.google.com/finance?q=ACP&ei=Oqa5WfnjJdaS2Aaq8a5o";
+        urlArray[2] = "https://www.google.com/finance?q=ACP&ei=Oqa5WfnjJdaS2Aaq8a5o"; // ACP dividend hisotry not on Nasdaq
     }
     
     public String getURL(int index) {
