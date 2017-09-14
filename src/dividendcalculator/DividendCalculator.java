@@ -15,7 +15,7 @@ import javax.swing.border.Border;
 public class DividendCalculator {
     // Create fields
     static double monthlyTotalDiv = 0;
-    static final int arraySize = 10;
+    static final int arraySize = 20;
     static URLObject urlObject = new URLObject(arraySize);
     static DivURLObject divObject = new DivURLObject(arraySize);
     static String[] symbolArray = new String[arraySize];
@@ -112,7 +112,7 @@ public class DividendCalculator {
       jlabShares.setBorder(border);
       jlabShares.setBackground(new Color(204, 255, 204));
       jlabShares.setOpaque(true);
-      JLabel jlabPrice = new JLabel("Stock Price");
+      JLabel jlabPrice = new JLabel("Stock Price / Total");
       jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
       jlabPrice.setBorder(border);
       jlabPrice.setBackground(new Color(204, 255, 204));
@@ -129,7 +129,7 @@ public class DividendCalculator {
           jlabSymbolArray[i].setHorizontalAlignment(SwingConstants.CENTER);
           jlabSymbolArray[i].setBorder(BorderFactory.createEtchedBorder());
           
-          jlabPriceArray[i] = new JLabel(priceArray[i]);
+          jlabPriceArray[i] = new JLabel(priceArray[i] + " / " + priceArray[i]);
           jlabPriceArray[i].setHorizontalAlignment(SwingConstants.CENTER);
           
           String div = monthlyDivArray[i];
@@ -161,11 +161,11 @@ public class DividendCalculator {
       jbuttonCalculateTotal.addActionListener((ae) -> { 
         // Calculate total div amount
         double totalMonthly = calculateTotalMonthlyDiv(jtfShareArray);
-        BigDecimal bd = new BigDecimal(totalMonthly).setScale(2, RoundingMode.HALF_EVEN);
+        BigDecimal bd = new BigDecimal(totalMonthly).setScale(2, RoundingMode.HALF_EVEN); // Need to make into method
         totalMonthly = bd.doubleValue();
         jlabMonthlyDiv.setText("Monthly Div / Total: " + totalMonthly);
         
-        // Calculate total individual div amounts
+        // Calculate total individual div amounts, set stock price labels
         for(int i = 0; i < 3; i++) {
             double totalIndiv = 0;
             String div = monthlyDivArray[i];
@@ -173,6 +173,13 @@ public class DividendCalculator {
             BigDecimal bd2 = new BigDecimal(totalIndiv).setScale(2, RoundingMode.HALF_EVEN);
             totalIndiv = bd2.doubleValue();
             jlabMonthlyDivArray[i].setText(div + " / " + totalIndiv);
+            
+            double stockPrice = Double.parseDouble(priceArray[i]);
+            double numShares = Double.parseDouble(jtfShareArray[i].getText());
+            double totalStockPrice = stockPrice * numShares;
+            BigDecimal bd3 = new BigDecimal(totalStockPrice).setScale(2, RoundingMode.HALF_EVEN);
+            totalStockPrice = bd3.doubleValue();
+            jlabPriceArray[i].setText(stockPrice + " / " + totalStockPrice);
         }
         
         frame.pack(); // Repacks frame when total gets too large
@@ -186,6 +193,7 @@ public class DividendCalculator {
     }
     
     public static void main(String[] args) {
+        // Set Nimbus look and feel
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -200,6 +208,7 @@ public class DividendCalculator {
         setSymbols();
         setPrices();
         setDividends();
+        
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new DividendCalculator();
@@ -300,7 +309,7 @@ class URLObject {
 }
 
 class DivURLObject {
-    int arraySize = 10;
+    int arraySize = 20;
     String[] divUrlArray;
     
     public DivURLObject(int size) {
