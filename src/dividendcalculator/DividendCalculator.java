@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLConnection;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
 
 public class DividendCalculator {
@@ -62,7 +63,7 @@ public class DividendCalculator {
         } catch (NumberFormatException e) {
             System.out.println("Error: " + e);
         }
-        System.out.println(monthlyTotalDiv);
+        System.out.println("Total: " + monthlyTotalDiv);
         return monthlyTotalDiv;
     }
     
@@ -136,6 +137,7 @@ public class DividendCalculator {
         BigDecimal bd = new BigDecimal(totalMonthly).setScale(2, RoundingMode.HALF_EVEN);
         totalMonthly = bd.doubleValue();
         jlabMonthlyDiv.setText("Monthly Div / Total: " + totalMonthly); 
+        frame.pack();
       });
       jpanMain.add(jbuttonCalculateTotal);
       jpanMain.add(new JPanel());
@@ -145,8 +147,18 @@ public class DividendCalculator {
       frame.setVisible(true);
     }
     
-    
     public static void main(String[] args) {
+        try {
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+
         setSymbols();
         setPrices();
         setDividends();
