@@ -12,7 +12,7 @@ import java.net.URLConnection;
 
 public class DividendCalculator {
     // Create fields
-    double monthlyTotalDiv = 0;
+    static double monthlyTotalDiv;
     static final int arraySize = 10;
     static URLObject urlObject = new URLObject(arraySize);
     static DivURLObject divObject = new DivURLObject(arraySize);
@@ -40,6 +40,14 @@ public class DividendCalculator {
             monthlyDivArray[i] = divReader.div;
             System.out.println(monthlyDivArray[i]);
         }
+        try {
+            for(int i = 0; i < monthlyDivArray.length; i++) {
+                monthlyTotalDiv += Double.parseDouble(monthlyDivArray[i]);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Error: " + e);
+        }
+        
     }
     
     public DividendCalculator() { 
@@ -52,20 +60,24 @@ public class DividendCalculator {
       // Initialize and center 'column' labels
       JLabel jlabSymbols = new JLabel("Symbols");
       jlabSymbols.setHorizontalAlignment(SwingConstants.CENTER);
+      JLabel jlabShares = new JLabel("Number of Shares");
+      jlabShares.setHorizontalAlignment(SwingConstants.CENTER);
       JLabel jlabPrice = new JLabel("Price");
       jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
       JLabel jlabMonthlyDiv = new JLabel("Monthly Div / Total: " + monthlyTotalDiv);
       jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
       
-      // Create columns of JLabels
+      // Create columns of JLabels/Textfields
       JLabel[] jlabSymbolArray = new JLabel[3];
+      JTextField[] jtfShareArray = new JTextField[3];
       JLabel[] jlabPriceArray = new JLabel[3];
       JLabel[] jlabMonthlyDivArray = new JLabel[3];
       
-      // Initialize arrays and center text in labels
+      // Initialize arrays and center text in labels; create textfields
       for(int i = 0; i < 3; i++) {
           jlabSymbolArray[i] = new JLabel(symbolArray[i]);
           jlabSymbolArray[i].setHorizontalAlignment(SwingConstants.CENTER);
+          jtfShareArray[i] = new JTextField();
           jlabPriceArray[i] = new JLabel(priceArray[i]);
           jlabPriceArray[i].setHorizontalAlignment(SwingConstants.CENTER);
           jlabMonthlyDivArray[i] = new JLabel(monthlyDivArray[i]);
@@ -73,12 +85,14 @@ public class DividendCalculator {
       }
       
       frame.add(jlabSymbols);
+      frame.add(jlabShares);
       frame.add(jlabPrice);
       frame.add(jlabMonthlyDiv);
       
       // Add arrays to columns in GridLayout
       for(int j = 0; j < 3; j++) {
           frame.add(jlabSymbolArray[j]);
+          frame.add(jtfShareArray[j]);
           frame.add(jlabPriceArray[j]);
           frame.add(jlabMonthlyDivArray[j]);
       }
