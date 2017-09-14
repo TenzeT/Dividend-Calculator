@@ -15,6 +15,7 @@ public class DividendCalculator {
     double monthlyTotalDiv = 0;
     static final int arraySize = 10;
     static URLObject urlObject = new URLObject(arraySize);
+    static DivURLObject divObject = new DivURLObject(arraySize);
     static String[] symbolArray = new String[arraySize];
     static String[] priceArray = new String[arraySize];
     static String[] monthlyDivArray = new String[arraySize];
@@ -31,7 +32,14 @@ public class DividendCalculator {
             priceArray[i] = stockReader.s;
             System.out.println(priceArray[i]);
         }
-        
+    }
+    
+    public static void setDividends() {
+        for(int i = 0; i < 3; i++) {
+            NasdaqDivReader divReader = new NasdaqDivReader(symbolArray[i], divObject.getDivURL(i));
+            monthlyDivArray[i] = divReader.div;
+            System.out.println(monthlyDivArray[i]);
+        }
     }
     
     public DividendCalculator() { 
@@ -52,7 +60,7 @@ public class DividendCalculator {
       for(int i = 0; i < 3; i++) {
           jlabSymbolArray[i] = new JLabel(symbolArray[i]);
           jlabPriceArray[i] = new JLabel(priceArray[i]);
-          jlabMonthlyDivArray[i] = new JLabel("div");
+          jlabMonthlyDivArray[i] = new JLabel(monthlyDivArray[i]);
       }
       
       frame.add(jlabSymbols);
@@ -74,6 +82,7 @@ public class DividendCalculator {
     public static void main(String[] args) {
         setSymbols();
         setPrices();
+        setDividends();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new DividendCalculator();
@@ -120,6 +129,44 @@ class GoogleStockReader {
     }
 }
 
+class NasdaqDivReader {
+    public String div;
+    
+    public NasdaqDivReader(String symbol, String divUrl) {
+        try {
+            div = getDiv(symbol, divUrl);
+        } catch (IOException e) {
+           System.out.println("Error:" + e);
+        }
+    }
+    
+    public String getDiv(String sym, String divUrl) throws IOException {
+        String symbol = sym;
+        URL url = new URL(divUrl);
+        URLConnection urlConn = url.openConnection();
+        InputStreamReader inStream = new InputStreamReader(urlConn.getInputStream());
+        BufferedReader buff = new BufferedReader(inStream);
+        
+        String div = "not found";
+        String lineFind = ("<span id=\"quotes_content_left_dividendhistoryGrid_CashAmount_0\">");
+        String line = buff.readLine();
+        while(line != null) {
+            if(line.contains(lineFind)) {
+                    int target = line.indexOf(lineFind);
+                    int deci = line.indexOf(".", target); //search for index of . starting at target
+                    int start = deci;
+                    while(line.charAt(start) != '>') {
+                        start--;
+                    }
+                    div = line.substring(start + 1, deci + 3);
+                }    
+            line = buff.readLine();
+        }
+        System.out.println(div);
+        return div;
+    }
+}
+
 class URLObject {
     int arraySize = 10;
     String[] urlArray;
@@ -134,5 +181,22 @@ class URLObject {
     
     public String getURL(int index) {
         return urlArray[index];
+    }
+}
+
+class DivURLObject {
+    int arraySize = 10;
+    String[] divUrlArray;
+    
+    public DivURLObject(int size) {
+        arraySize = size;
+        divUrlArray = new String[arraySize];
+        divUrlArray[0] = "http://www.nasdaq.com/symbol/cefl/dividend-history";
+        divUrlArray[1] = "http://www.nasdaq.com/symbol/orc/dividend-history";
+        divUrlArray[2] = "https://www.google.com/finance?q=ACP&ei=Oqa5WfnjJdaS2Aaq8a5o";
+    }
+    
+    public String getDivURL(int index) {
+        return divUrlArray[index];
     }
 }
