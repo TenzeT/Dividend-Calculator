@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import sun.misc.FloatingDecimal;
+import javax.swing.border.Border;
 
 public class DividendCalculator {
     // Create fields
@@ -62,21 +62,28 @@ public class DividendCalculator {
     }
     
     public DividendCalculator() { 
-        
-      JFrame frame = new JFrame("Dividend Calculator");  
+      
+      ImageIcon icon = new ImageIcon(this.getClass().getResource("\\images\\if_Money_206469.png")); // Get icon from src/images
+      JFrame frame = new JFrame("Dividend Calculator");
+      frame.setIconImage(icon.getImage());
       //frame.setSize(400, 300);
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new FlowLayout());
       
-      // Initialize and center 'column' labels
+      // Initialize 'column' labels
+      Border border = BorderFactory.createLineBorder(Color.BLUE, 1); // Generic border
       JLabel jlabSymbols = new JLabel("Symbols");
       jlabSymbols.setHorizontalAlignment(SwingConstants.CENTER);
+      jlabSymbols.setBorder(border);
       JLabel jlabShares = new JLabel("Number of Shares");
       jlabShares.setHorizontalAlignment(SwingConstants.CENTER);
+      jlabShares.setBorder(border);
       JLabel jlabPrice = new JLabel("Price");
       jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
+      jlabPrice.setBorder(border);
       JLabel jlabMonthlyDiv = new JLabel("Monthly Div / Total: " + calculateTotalMonthlyDiv());
-      jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
+      jlabMonthlyDiv.setHorizontalAlignment(SwingConstants.CENTER);
+      jlabMonthlyDiv.setBorder(border);
       
       // Create columns of JLabels/Textfields
       JLabel[] jlabSymbolArray = new JLabel[3];
