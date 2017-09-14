@@ -48,12 +48,14 @@ public class DividendCalculator {
         }
     }
     
-    public static double calculateTotalMonthlyDiv() {
-        monthlyTotalDiv = 0;
+    // Overloaded for Calculate Button action
+    public static double calculateTotalMonthlyDiv(JTextField[] jtf) {
+        monthlyTotalDiv = 0;  
         try {
             for(int i = 0; i < 3; i++) {
-                double value = Double.parseDouble(monthlyDivArray[i]);
-                monthlyTotalDiv += value;
+                double numShare = Double.parseDouble(jtf[i].getText());
+                double divAmount = Double.parseDouble(monthlyDivArray[i]);
+                monthlyTotalDiv += (numShare * divAmount);
             }
         } catch (NumberFormatException e) {
             System.out.println("Error: " + e);
@@ -70,6 +72,17 @@ public class DividendCalculator {
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.setLayout(new FlowLayout());
       
+      // Create columns of JLabels/Textfields
+      JLabel[] jlabSymbolArray = new JLabel[3];
+      JTextField[] jtfShareArray = new JTextField[3];
+      JLabel[] jlabPriceArray = new JLabel[3];
+      JLabel[] jlabMonthlyDivArray = new JLabel[3];
+      
+      for(int i = 0; i < 3; i++) {
+          jtfShareArray[i] = new JTextField("1", 5);
+          jtfShareArray[i].setHorizontalAlignment(SwingConstants.CENTER);
+      }
+      
       // Initialize 'column' labels
       Border border = BorderFactory.createLineBorder(Color.BLUE, 1); // Generic border
       JLabel jlabSymbols = new JLabel("Symbols");
@@ -81,21 +94,14 @@ public class DividendCalculator {
       JLabel jlabPrice = new JLabel("Price");
       jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
       jlabPrice.setBorder(border);
-      JLabel jlabMonthlyDiv = new JLabel("Monthly Div / Total: " + calculateTotalMonthlyDiv());
+      JLabel jlabMonthlyDiv = new JLabel("Monthly Div / Total: " + calculateTotalMonthlyDiv(jtfShareArray));
       jlabMonthlyDiv.setHorizontalAlignment(SwingConstants.CENTER);
       jlabMonthlyDiv.setBorder(border);
-      
-      // Create columns of JLabels/Textfields
-      JLabel[] jlabSymbolArray = new JLabel[3];
-      JTextField[] jtfShareArray = new JTextField[3];
-      JLabel[] jlabPriceArray = new JLabel[3];
-      JLabel[] jlabMonthlyDivArray = new JLabel[3];
-      
+
       // Initialize arrays and center text in labels; create textfields
       for(int i = 0; i < 3; i++) {
           jlabSymbolArray[i] = new JLabel(symbolArray[i]);
           jlabSymbolArray[i].setHorizontalAlignment(SwingConstants.CENTER);
-          jtfShareArray[i] = new JTextField();
           jlabPriceArray[i] = new JLabel(priceArray[i]);
           jlabPriceArray[i].setHorizontalAlignment(SwingConstants.CENTER);
           jlabMonthlyDivArray[i] = new JLabel(monthlyDivArray[i]);
@@ -122,8 +128,8 @@ public class DividendCalculator {
       jpanMain.add(new JPanel());
       jpanMain.add(new JPanel());
       JButton jbuttonCalculateTotal = new JButton("Calculate");
-      jbuttonCalculateTotal.addActionListener((ae) -> { // Calculate total monthly dividend
-        jlabMonthlyDiv.setText("Monthly Div / Total: " + calculateTotalMonthlyDiv());
+      jbuttonCalculateTotal.addActionListener((ae) -> { // Calculate total monthly dividend using overloaded method
+        jlabMonthlyDiv.setText("Monthly Div / Total: " + calculateTotalMonthlyDiv(jtfShareArray)); 
       });
       jpanMain.add(jbuttonCalculateTotal);
       jpanMain.add(new JPanel());
