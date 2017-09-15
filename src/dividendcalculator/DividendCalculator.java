@@ -24,9 +24,26 @@ public class DividendCalculator {
     
     // Populate symbol array
     public static void setSymbols() {
-        symbolArray[0] = "CEFL";
-        symbolArray[1] = "ORC";
-        symbolArray[2] = "ACP";
+        symbolArray[0] = "VDE";
+        symbolArray[1] = "VWO";
+        symbolArray[2] = "NEWT";
+        symbolArray[3] = "STAG";
+        symbolArray[4] = "ACP";
+        symbolArray[5] = "SPYD";
+        symbolArray[6] = "VYM";
+        symbolArray[7] = "CLDT";
+        symbolArray[8] = "USB";
+        symbolArray[9] = "BNS";
+        symbolArray[10] = "CEFL";
+        symbolArray[11] = "BDCL";
+        symbolArray[12] = "CHI";
+        symbolArray[13] = "EMG";
+        symbolArray[14] = "AHGP";
+        symbolArray[15] = "MAIN";
+        symbolArray[16] = "BPT";
+        symbolArray[17] = "ORC";
+        symbolArray[18] = "SCHB";
+        symbolArray[19] = "TFI";
     }
     
     // Populate stock price array
@@ -302,9 +319,27 @@ class URLObject {
     public URLObject(int size) {
         arraySize = size;
         urlArray = new String[arraySize];
-        urlArray[0] = "https://www.google.com/finance?q=CEFL&ei=Paa5WZnNN8XXjAHrsZ_IDg";
-        urlArray[1] = "https://www.google.com/finance?q=ORC&ei=u565WZGyM8GqjAGcoaBg";
-        urlArray[2] = "https://www.google.com/finance?q=ACP&ei=Oqa5WfnjJdaS2Aaq8a5o"; 
+        urlArray[0] = "https://finance.google.com/finance?q=VDE&ei=2p65WfGJNsWljAHboo-wDA"; // VDE
+        urlArray[1] = "https://finance.google.com/finance?q=VWO&ei=8jW7WZD6G9T82AbHrI-4AQ"; // VWO
+        urlArray[2] = "https://finance.google.com/finance?q=NEWT&ei=Dza7WdLcEIKn2Aacy6zACg"; // NEWT
+        urlArray[3] = "https://finance.google.com/finance?q=STAG&ei=Iza7WajRJpL3jAHi6o_wAg"; // STAG
+        urlArray[4] = "https://finance.google.com/finance?q=ACP&ei=iDa7WeDWLMmPjAHysZxQ"; // ACP
+        urlArray[5] = "https://finance.google.com/finance?q=NYSEARCA%3ASPYD&ei=oza7WZPlIpL3jAHi6o_wAg"; // SPYD
+        urlArray[6] = "https://finance.google.com/finance?q=NYSEARCA%3AVYM&ei=xTa7WbnDG5KN2Aafm7DICw"; // VYM
+        urlArray[7] = "https://finance.google.com/finance?q=NYSE%3ACLDT&ei=6ja7WYnrE4u-jAH7sreYDQ"; // CLDT
+        urlArray[8] = "https://finance.google.com/finance?q=NYSE%3AUSB&ei=-Ta7WYj0EJvU2Ab7g6rwCw"; // USB
+        urlArray[9] = "https://finance.google.com/finance?q=NYSE%3ABNS&ei=Eze7WePWLIjYjAHs34rYCQ"; // BNS
+        urlArray[10] = "https://finance.google.com/finance?q=NYSEARCA%3ACEFL&ei=ITe7WZnQNsT02Abi6IXQDw"; // CEFL
+        urlArray[11] = "https://finance.google.com/finance?q=NYSEARCA%3ABDCL&ei=Oje7Wfj1H8TNjAG5r4LYAw"; // BDCL
+        urlArray[12] = ""; // nothing for CHI
+        urlArray[13] = "https://finance.google.com/finance?q=NYSEARCA%3AIEMG&ei=TDe7WeHLBojYjAHs34rYCQ"; // IEMG
+        urlArray[14] = "https://finance.google.com/finance?q=NASDAQ%3AAHGP&ei=gTe7WcmmFYKn2Aacy6zACg"; // AHGP
+        urlArray[15] = "https://finance.google.com/finance?q=NYSE%3AMAIN&ei=jje7WcjVL8TNjAG5r4LYAw"; // MAIN
+        urlArray[16] = "https://finance.google.com/finance?q=NYSE%3ABPT&ei=oTe7WfHvFIjYjAHs34rYCQ"; // BPT
+        urlArray[17] = "https://finance.google.com/finance?q=NYSE%3AORC&ei=qje7WZmwF8T02Abi6IXQDw"; // ORC
+        urlArray[18] = "https://finance.google.com/finance?q=NYSEARCA%3ASCHB&ei=tje7WbDmLIn9jAHbjbXoDA"; // SCHB
+        urlArray[19] = "https://finance.google.com/finance?q=NYSEARCA%3ATFI&ei=wTe7WZn9J4OejAGy5YLAAQ"; // TFI
+
     }
     
     public String getURL(int index) {
