@@ -107,21 +107,25 @@ public class DividendCalculator {
       jlabSymbols.setBorder(border);
       jlabSymbols.setBackground(new Color(204, 255, 204));
       jlabSymbols.setOpaque(true);
+      jlabSymbols.setToolTipText("Your stock symbols");
       JLabel jlabShares = new JLabel("Number of Shares");
       jlabShares.setHorizontalAlignment(SwingConstants.CENTER);
       jlabShares.setBorder(border);
       jlabShares.setBackground(new Color(204, 255, 204));
       jlabShares.setOpaque(true);
+      jlabShares.setToolTipText("Number of stocks you own");
       JLabel jlabPrice = new JLabel("Stock Price / Total");
       jlabPrice.setHorizontalAlignment(SwingConstants.CENTER);
       jlabPrice.setBorder(border);
       jlabPrice.setBackground(new Color(204, 255, 204));
       jlabPrice.setOpaque(true);
+      jlabPrice.setToolTipText("Stock price / Total cost of your stocks");
       JLabel jlabMonthlyDiv = new JLabel("Monthly Div / Total: " + calculateTotalMonthlyDiv(jtfShareArray));
       jlabMonthlyDiv.setHorizontalAlignment(SwingConstants.CENTER);
       jlabMonthlyDiv.setBorder(border);
       jlabMonthlyDiv.setBackground(new Color(204, 255, 204));
       jlabMonthlyDiv.setOpaque(true);
+      jlabMonthlyDiv.setToolTipText("Stock monthly dividend / Total dividends from stock");
 
       // Initialize arrays and center text in labels; create textfields
       for(int i = 0; i < 3; i++) {
