@@ -11,16 +11,17 @@ import java.net.URL;
 import java.net.URLConnection;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
+import static jdk.nashorn.internal.objects.NativeString.toLowerCase;
 
 public class DividendCalculator {
     // Create fields
     static double monthlyTotalDiv = 0;
-    static final int arraySize = 20;
+    public static final int arraySize = 20;
     static URLObject urlObject = new URLObject(arraySize);
-    static DivURLObject divObject = new DivURLObject(arraySize);
-    static String[] symbolArray = new String[arraySize];
+    public static String[] symbolArray = new String[arraySize];
     static String[] priceArray = new String[arraySize];
     static String[] monthlyDivArray = new String[arraySize];
+    static DivURLObject divObject;
     
     // Populate symbol array
     public static void setSymbols() {
@@ -37,34 +38,54 @@ public class DividendCalculator {
         symbolArray[10] = "CEFL";
         symbolArray[11] = "BDCL";
         symbolArray[12] = "CHI";
-        symbolArray[13] = "EMG";
+        symbolArray[13] = "IEMG";
         symbolArray[14] = "AHGP";
         symbolArray[15] = "MAIN";
         symbolArray[16] = "BPT";
         symbolArray[17] = "ORC";
         symbolArray[18] = "SCHB";
         symbolArray[19] = "TFI";
+        divObject = new DivURLObject(arraySize, symbolArray);
     }
     
     // Populate stock price array
     public static void setPrices() {
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < arraySize; i++) {
             GoogleStockReader stockReader = new GoogleStockReader(symbolArray[i], urlObject.getURL(i));
-            priceArray[i] = stockReader.s;
+            switch(i) {
+                case 5:  priceArray[i] = "36.00"; // SPYD
+                         break;
+                case 8:  priceArray[i] = "51.00"; // USB
+                         break;
+                case 11: priceArray[i] = "17.30"; // BDCL
+                         break;
+                case 12: priceArray[i] = "11.26"; // CHI
+                         break;
+                case 13: priceArray[i] = "54.92"; // IEMG
+                         break;
+                case 14: priceArray[i] = "27.80"; // AHGP
+                         break;
+                case 15: priceArray[i] = "39.95"; // MAIN
+                         break;
+                default: priceArray[i] = priceArray[i] = stockReader.s;
+                         break;
+            }
             System.out.println(priceArray[i]);
         }
     }
     
     // Populate dividend array
     public static void setDividends() {
-        for(int i = 0; i < 3; i++) {
-            if(i == 2) {
+        for(int i = 0; i < arraySize; i++) {
+            if(i == 4) {
                 monthlyDivArray[i] = "0.12"; // Because ACP div not on Nasdaq
+                System.out.println("ACP: 12");
                 continue;
             }
+            
             NasdaqDivReader divReader = new NasdaqDivReader(symbolArray[i], divObject.getDivURL(i));
             monthlyDivArray[i] = divReader.div;
-            System.out.println(monthlyDivArray[i]);
+            System.out.println(symbolArray[i] + ": " + monthlyDivArray[i]);
         }
     }
     
@@ -72,7 +93,7 @@ public class DividendCalculator {
     public static double calculateTotalMonthlyDiv(JTextField[] jtf) {
         monthlyTotalDiv = 0;  
         try {
-            for(int i = 0; i < 3; i++) {
+            for(int i = 0; i < arraySize; i++) {
                 double numShare = Double.parseDouble(jtf[i].getText());
                 double divAmount = Double.parseDouble(monthlyDivArray[i]);
                 monthlyTotalDiv += (numShare * divAmount);
@@ -98,8 +119,8 @@ public class DividendCalculator {
         return totalIndividualMonthlyDiv;
     }
     
-    public DividendCalculator() { 
-      
+    public DividendCalculator() {
+        
       ImageIcon icon = new ImageIcon(this.getClass().getResource("\\images\\if_Money_206469.png")); // Get icon from src/images
       JFrame frame = new JFrame("Dividend Calculator");
       frame.setIconImage(icon.getImage());
@@ -107,12 +128,12 @@ public class DividendCalculator {
       frame.setLayout(new FlowLayout());
       
       // Create columns of JLabels/Textfields
-      JLabel[] jlabSymbolArray = new JLabel[3];
-      JTextField[] jtfShareArray = new JTextField[3];
-      JLabel[] jlabPriceArray = new JLabel[3];
-      JLabel[] jlabMonthlyDivArray = new JLabel[3];
+      JLabel[] jlabSymbolArray = new JLabel[arraySize];
+      JTextField[] jtfShareArray = new JTextField[arraySize];
+      JLabel[] jlabPriceArray = new JLabel[arraySize];
+      JLabel[] jlabMonthlyDivArray = new JLabel[arraySize];
       
-      for(int i = 0; i < 3; i++) {
+      for(int i = 0; i < arraySize; i++) {
           jtfShareArray[i] = new JTextField("1", 5);
           jtfShareArray[i].setHorizontalAlignment(SwingConstants.CENTER);
       }
@@ -145,7 +166,7 @@ public class DividendCalculator {
       jlabMonthlyDiv.setToolTipText("Stock monthly dividend / Total dividends from stock");
 
       // Initialize arrays and center text in labels; create textfields
-      for(int i = 0; i < 3; i++) {
+      for(int i = 0; i < arraySize; i++) {
           jlabSymbolArray[i] = new JLabel(symbolArray[i]);
           jlabSymbolArray[i].setHorizontalAlignment(SwingConstants.CENTER);
           jlabSymbolArray[i].setBorder(BorderFactory.createEtchedBorder());
@@ -159,7 +180,7 @@ public class DividendCalculator {
       }
       
       JPanel jpanMain = new JPanel();
-      jpanMain.setLayout(new GridLayout(5, 4, 10, 10));
+      jpanMain.setLayout(new GridLayout(22, 4, 10, 10));
       jpanMain.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
       
       jpanMain.add(jlabSymbols);
@@ -168,7 +189,7 @@ public class DividendCalculator {
       jpanMain.add(jlabMonthlyDiv);
       
       // Add arrays to columns in GridLayout
-      for(int j = 0; j < 3; j++) {
+      for(int j = 0; j < arraySize; j++) {
           jpanMain.add(jlabSymbolArray[j]);
           jpanMain.add(jtfShareArray[j]);
           jpanMain.add(jlabPriceArray[j]);
@@ -187,7 +208,7 @@ public class DividendCalculator {
         jlabMonthlyDiv.setText("Monthly Div / Total: " + totalMonthly);
         
         // Calculate total individual div amounts, set stock price labels
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < arraySize; i++) {
             double totalIndiv = 0;
             String div = monthlyDivArray[i];
             totalIndiv = getTotalIndividualMonthlyDiv(div, i, jtfShareArray);
@@ -331,7 +352,7 @@ class URLObject {
         urlArray[9] = "https://finance.google.com/finance?q=NYSE%3ABNS&ei=Eze7WePWLIjYjAHs34rYCQ"; // BNS
         urlArray[10] = "https://finance.google.com/finance?q=NYSEARCA%3ACEFL&ei=ITe7WZnQNsT02Abi6IXQDw"; // CEFL
         urlArray[11] = "https://finance.google.com/finance?q=NYSEARCA%3ABDCL&ei=Oje7Wfj1H8TNjAG5r4LYAw"; // BDCL
-        urlArray[12] = ""; // nothing for CHI
+        urlArray[12] = "https://finance.google.com"; // nothing for CHI
         urlArray[13] = "https://finance.google.com/finance?q=NYSEARCA%3AIEMG&ei=TDe7WeHLBojYjAHs34rYCQ"; // IEMG
         urlArray[14] = "https://finance.google.com/finance?q=NASDAQ%3AAHGP&ei=gTe7WcmmFYKn2Aacy6zACg"; // AHGP
         urlArray[15] = "https://finance.google.com/finance?q=NYSE%3AMAIN&ei=jje7WcjVL8TNjAG5r4LYAw"; // MAIN
@@ -348,15 +369,24 @@ class URLObject {
 }
 
 class DivURLObject {
-    int arraySize = 20;
     String[] divUrlArray;
+    int count;
     
-    public DivURLObject(int size) {
-        arraySize = size;
-        divUrlArray = new String[arraySize];
-        divUrlArray[0] = "http://www.nasdaq.com/symbol/cefl/dividend-history";
-        divUrlArray[1] = "http://www.nasdaq.com/symbol/orc/dividend-history";
-        divUrlArray[2] = null; // ACP dividend hisotry not on Nasdaq
+    public DivURLObject(int arrSize, String[] symArray) {
+        divUrlArray = new String[arrSize];
+        for(int i = 0; i < arrSize; i++) {
+            if(i == 4) {
+                divUrlArray[i] = "http://www.nasdaq.com/symbol"; //0.12"; // B/C no ACP Div on Nasdaq
+                count++;
+                System.out.println("Count: " + count); // debug
+                System.out.println("DIV URL: " + divUrlArray[i]);
+                continue;
+            }
+            divUrlArray[i] = "http://www.nasdaq.com/symbol/" + toLowerCase(symArray[i]) + "/dividend-history";
+            count++;
+            System.out.println("Count: " + count); // debug
+            System.out.println("DIV URL: " + divUrlArray[i]);
+        }
     }
     
     public String getDivURL(int index) {
