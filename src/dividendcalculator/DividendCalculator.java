@@ -52,7 +52,7 @@ public class DividendCalculator {
     public static void setPrices() {
         for(int i = 0; i < arraySize; i++) {
             GoogleStockReader stockReader = new GoogleStockReader(symbolArray[i], urlObject.getURL(i));
-            switch(i) {
+            switch(i) { // Stocks not found on Google.finance
                 case 5:  priceArray[i] = "36.00"; // SPYD
                          break;
                 case 8:  priceArray[i] = "51.00"; // USB
@@ -242,7 +242,7 @@ public class DividendCalculator {
           jpanMain.add(jlabMonthlyDivArray[j]);
       }
       
-      JLabel smallTextLabel = new JLabel("<html>*/** div paid quarterly/semi-annualy</html>");
+      JLabel smallTextLabel = new JLabel("<html>*/** div paid quarterly/semi-annually</html>");
       smallTextLabel.setFont(new Font("Serif", Font.PLAIN, 10));
       jpanMain.add(smallTextLabel);
       jpanMain.add(new JPanel());
