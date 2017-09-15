@@ -20,7 +20,7 @@ public class DividendCalculator {
     static URLObject urlObject = new URLObject(arraySize);
     public static String[] symbolArray = new String[arraySize];
     static String[] priceArray = new String[arraySize];
-    static String[] monthlyDivArray = new String[arraySize];
+    static double[] monthlyDivArray = new double[arraySize];
     static DivURLObject divObject;
     
     // Populate symbol array
@@ -78,13 +78,33 @@ public class DividendCalculator {
     public static void setDividends() {
         for(int i = 0; i < arraySize; i++) {
             if(i == 4) {
-                monthlyDivArray[i] = "0.12"; // Because ACP div not on Nasdaq
+                monthlyDivArray[i] = 0.12; // Because ACP div not on Nasdaq
                 System.out.println("ACP: 12");
                 continue;
             }
             
             NasdaqDivReader divReader = new NasdaqDivReader(symbolArray[i], divObject.getDivURL(i));
-            monthlyDivArray[i] = divReader.div;
+            
+            switch(i) {
+                case 0:
+                case 1:
+                case 2:
+                case 5:
+                case 8:
+                case 9:
+                case 11:
+                case 14:
+                case 16:
+                case 18: monthlyDivArray[i] = (Double.parseDouble(divReader.div)) / 4; // Quarterly payout
+                         System.out.println(symbolArray[i] + " " + divReader.div + " <-- ANNUAL; DEBUG"); // DEBUG
+                         System.out.println(symbolArray[i] + " QUARTERLY " + monthlyDivArray[i] + "; DEBUG"); // DEBUG
+                         break;
+                case 13: monthlyDivArray[i] = Double.parseDouble(divReader.div) / 2; // Semi-Annual payout
+                         break;
+                default: monthlyDivArray[i] = Double.parseDouble(divReader.div); // Monthly payout
+                         break;
+            }
+            
             System.out.println(symbolArray[i] + ": " + monthlyDivArray[i]);
         }
     }
@@ -95,7 +115,7 @@ public class DividendCalculator {
         try {
             for(int i = 0; i < arraySize; i++) {
                 double numShare = Double.parseDouble(jtf[i].getText());
-                double divAmount = Double.parseDouble(monthlyDivArray[i]);
+                double divAmount = monthlyDivArray[i];
                 monthlyTotalDiv += (numShare * divAmount);
             }
         } catch (NumberFormatException e) {
@@ -105,14 +125,13 @@ public class DividendCalculator {
         return monthlyTotalDiv;
     }
     
-    public static double getTotalIndividualMonthlyDiv(String div, int index, JTextField[] jtf) {
+    public static double getTotalIndividualMonthlyDiv(double div, int index, JTextField[] jtf) {
         double totalIndividualMonthlyDiv = 0;
         double numShare = 0;
         
         try {
             numShare = Double.parseDouble(jtf[index].getText());
-            double divAmount = Double.parseDouble(div);
-            totalIndividualMonthlyDiv = numShare * divAmount;
+            totalIndividualMonthlyDiv = numShare * div;
         } catch (NumberFormatException e) {
             System.out.println("error: " + e);
         }
@@ -158,12 +177,20 @@ public class DividendCalculator {
       jlabPrice.setBackground(new Color(204, 255, 204));
       jlabPrice.setOpaque(true);
       jlabPrice.setToolTipText("Stock price / Total cost of your stocks");
-      JLabel jlabMonthlyDiv = new JLabel("Monthly Div / Total: " + calculateTotalMonthlyDiv(jtfShareArray));
+      JLabel jlabMonthlyDiv = new JLabel("Monthly Div / Total ");
       jlabMonthlyDiv.setHorizontalAlignment(SwingConstants.CENTER);
       jlabMonthlyDiv.setBorder(border);
       jlabMonthlyDiv.setBackground(new Color(204, 255, 204));
       jlabMonthlyDiv.setOpaque(true);
       jlabMonthlyDiv.setToolTipText("Stock monthly dividend / Total dividends from stock");
+      
+      // Initialize total divs label - bottom right in GUI
+      JLabel jlabTotalDivs = new JLabel("Total Divs: " + 
+                                         roundWithBigDecimal(calculateTotalMonthlyDiv(jtfShareArray)));
+      jlabTotalDivs.setBackground(new Color(204, 255, 204));
+      jlabTotalDivs.setOpaque(true);
+      jlabTotalDivs.setBorder(border);
+      jlabTotalDivs.setHorizontalAlignment(SwingConstants.CENTER);
 
       // Initialize arrays and center text in labels; create textfields
       for(int i = 0; i < arraySize; i++) {
@@ -174,8 +201,8 @@ public class DividendCalculator {
           jlabPriceArray[i] = new JLabel(priceArray[i] + " / " + priceArray[i]);
           jlabPriceArray[i].setHorizontalAlignment(SwingConstants.CENTER);
           
-          String div = monthlyDivArray[i];
-          jlabMonthlyDivArray[i] = new JLabel(div+ " / " + getTotalIndividualMonthlyDiv(div, i, jtfShareArray));
+          double div = roundWithBigDecimal(monthlyDivArray[i]);
+          jlabMonthlyDivArray[i] = new JLabel(div + " / " + getTotalIndividualMonthlyDiv(div, i, jtfShareArray));
           jlabMonthlyDivArray[i].setHorizontalAlignment(SwingConstants.CENTER);
       }
       
@@ -190,48 +217,70 @@ public class DividendCalculator {
       
       // Add arrays to columns in GridLayout
       for(int j = 0; j < arraySize; j++) {
-          jpanMain.add(jlabSymbolArray[j]);
+          String sym = jlabSymbolArray[j].getText();
+          switch(j) {
+              case 0:
+              case 1:
+              case 2:
+              case 5:
+              case 6:
+              case 8:
+              case 9:
+              case 11:
+              case 14:
+              case 16:
+              case 18: jlabSymbolArray[j].setText(sym + " *");
+                       jpanMain.add(jlabSymbolArray[j]);
+                       break;
+              case 13: jlabSymbolArray[j].setText(sym + " **");
+                       jpanMain.add(jlabSymbolArray[j]);
+                       break;
+              default: jpanMain.add(jlabSymbolArray[j]);
+          }
           jpanMain.add(jtfShareArray[j]);
           jpanMain.add(jlabPriceArray[j]);
           jpanMain.add(jlabMonthlyDivArray[j]);
       }
       
-      jpanMain.add(new JPanel());
+      JLabel smallTextLabel = new JLabel("<html>*/** div paid quarterly/semi-annualy</html>");
+      smallTextLabel.setFont(new Font("Serif", Font.PLAIN, 10));
+      jpanMain.add(smallTextLabel);
       jpanMain.add(new JPanel());
       JButton jbuttonCalculateTotal = new JButton("Calculate");
       jbuttonCalculateTotal.setHorizontalAlignment(SwingConstants.CENTER);
+      
       jbuttonCalculateTotal.addActionListener((ae) -> { 
         // Calculate total div amount
-        double totalMonthly = calculateTotalMonthlyDiv(jtfShareArray);
-        BigDecimal bd = new BigDecimal(totalMonthly).setScale(2, RoundingMode.HALF_EVEN); // Need to make into method
-        totalMonthly = bd.doubleValue();
-        jlabMonthlyDiv.setText("Monthly Div / Total: " + totalMonthly);
+        double totalMonthly = roundWithBigDecimal(calculateTotalMonthlyDiv(jtfShareArray));
+        jlabTotalDivs.setText("Total Divs: " + totalMonthly);
         
         // Calculate total individual div amounts, set stock price labels
         for(int i = 0; i < arraySize; i++) {
             double totalIndiv = 0;
-            String div = monthlyDivArray[i];
-            totalIndiv = getTotalIndividualMonthlyDiv(div, i, jtfShareArray);
-            BigDecimal bd2 = new BigDecimal(totalIndiv).setScale(2, RoundingMode.HALF_EVEN);
-            totalIndiv = bd2.doubleValue();
+            double div = roundWithBigDecimal(monthlyDivArray[i]);
+            totalIndiv = roundWithBigDecimal(getTotalIndividualMonthlyDiv(div, i, jtfShareArray));
             jlabMonthlyDivArray[i].setText(div + " / " + totalIndiv);
             
             double stockPrice = Double.parseDouble(priceArray[i]);
             double numShares = Double.parseDouble(jtfShareArray[i].getText());
-            double totalStockPrice = stockPrice * numShares;
-            BigDecimal bd3 = new BigDecimal(totalStockPrice).setScale(2, RoundingMode.HALF_EVEN);
-            totalStockPrice = bd3.doubleValue();
+            double totalStockPrice = roundWithBigDecimal(stockPrice * numShares);
             jlabPriceArray[i].setText(stockPrice + " / " + totalStockPrice);
-        }
-        
-        frame.pack(); // Repacks frame when total gets too large
+        }  
+        frame.pack(); // Repacks frame when values get too large
       });
+      
       jpanMain.add(jbuttonCalculateTotal);
-      jpanMain.add(new JPanel());
+      jpanMain.add(jlabTotalDivs);
       
       frame.add(jpanMain);
       frame.pack();
       frame.setVisible(true);
+    }
+    
+    public double roundWithBigDecimal(double price) {
+        BigDecimal bd = new BigDecimal(price).setScale(2, RoundingMode.HALF_EVEN);
+        price = bd.doubleValue();
+        return price;
     }
     
     public static void main(String[] args) {
